@@ -1,19 +1,38 @@
 
 //===================================
-// 11 - Creating a Simple Web Server
+// 12 - Routing
 //===================================
 //#region 
 const fs = require('fs');
 const http = require('http');
+const url = require('url');
 
 
 // Server
 const server = http.createServer((req,res)=> {
     // console.log(req)
-    res.end("Hello from Server");
+    const pathName = req.url;
+    if(pathName === '/' || pathName === "/overview"){
+        res.end("This is the overview");
+    }
+    else if(pathName === "/product"){
+        res.end("This is the product");
+    }
+    else{      
+        // res.writeHead(404,"Page Not found");
+
+        // adding response-header  
+        // 1. stantandr header   etc :  text/html , text/text ..... pdf ....,, file , img
+        // 2. custom header    we can add custom header
+        res.writeHead(404,{
+            'content-type':"text/html",
+            'my-own-header':'hello-world'
+        })
+        res.end("<h1>Page not found!</h1>")
+    }
 })
 
-server.listen(8000,'127.0.0.1',()=>{
+server.listen(8300,'127.0.0.1',()=>{
     console.log("Listening to request on port 8000");
 })
 
@@ -21,6 +40,36 @@ server.listen(8000,'127.0.0.1',()=>{
 //becuase of event loop used on server and listen
 // after runing the server  node index.js    
 // user server on browser   127.0.0.1:8000
+
+
+//#endregion
+
+
+
+
+
+//===================================
+// 11 - Creating a Simple Web Server
+//===================================
+//#region 
+// const fs = require('fs');
+// const http = require('http');
+
+
+// // Server
+// const server = http.createServer((req,res)=> {
+//     // console.log(req)
+//     res.end("Hello from Server");
+// })
+
+// server.listen(8000,'127.0.0.1',()=>{
+//     console.log("Listening to request on port 8000");
+// })
+
+// //server keep runing until we do not stop
+// //becuase of event loop used on server and listen
+// // after runing the server  node index.js    
+// // user server on browser   127.0.0.1:8000
 
 
 //#endregion
