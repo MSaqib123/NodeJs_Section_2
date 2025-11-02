@@ -1,18 +1,25 @@
 //===================================
-// 8 - Reading and Writing Files
+// 9 - Blocking and NonBlocking Asynchronous Nature of Nodejs
 //===================================
 //#region 
-const fs = require('fs');
+                // theory of  Asynchronous vs  Synchronous
+//#endregion
 
-//==== Read Text ====
-const textIn = fs.readFileSync('./txt/input.txt','utf-8');
-console.log(textIn)
 
-//==== Write text ====
-const textOut = `This is what we know about avocado : ${textIn}.\nCreated on ${Date.now()}`
-fs.writeFileSync('./txt/output.txt',textOut);
-console.log('fileOut');
+//===================================
+// 8 - Reading and Writing Files  (Synchronous  Blocking Coding)
+//===================================
+//#region 
+// const fs = require('fs');
 
+// //==== Read Text ====
+// const textIn = fs.readFileSync('./txt/input.txt','utf-8');
+// console.log(textIn)
+
+// //==== Write text ====
+// const textOut = `This is what we know about avocado : ${textIn}.\nCreated on ${Date.now()}`
+// fs.writeFileSync('./txt/output.txt',textOut);
+// console.log('fileOut');
 //#endregion
 
 
