@@ -1,11 +1,14 @@
-
 //===================================
-// 12 - Routing
+// 13 - Building a Very Simple API
 //===================================
 //#region 
 const fs = require('fs');
 const http = require('http');
 const url = require('url');
+
+
+// read data from file
+const data = fs.readFileSync('./dev-data/data.json','utf-8');
 
 
 // Server
@@ -18,12 +21,17 @@ const server = http.createServer((req,res)=> {
     else if(pathName === "/product"){
         res.end("This is the product");
     }
-    else{      
-        // res.writeHead(404,"Page Not found");
+    else if(pathName === "/api"){
+        
+        res.writeHead(200, {'Content-type':'application/json'});
+        res.end(data)
 
-        // adding response-header  
-        // 1. stantandr header   etc :  text/html , text/text ..... pdf ....,, file , img
-        // 2. custom header    we can add custom header
+        // fs.readFile('./dev-data/data.json','utf-8',(err,data)=>{
+        //     res.writeHead(200, {'Content-type':'application/json'});
+        //     res.end(data)
+        // });
+    }
+    else{
         res.writeHead(404,{
             'content-type':"text/html",
             'my-own-header':'hello-world'
@@ -36,10 +44,55 @@ server.listen(8300,'127.0.0.1',()=>{
     console.log("Listening to request on port 8000");
 })
 
-//server keep runing until we do not stop
-//becuase of event loop used on server and listen
-// after runing the server  node index.js    
-// user server on browser   127.0.0.1:8000
+
+//#endregion
+
+
+
+
+
+
+//===================================
+// 12 - Routing
+//===================================
+//#region 
+// const fs = require('fs');
+// const http = require('http');
+// const url = require('url');
+
+
+// // Server
+// const server = http.createServer((req,res)=> {
+//     // console.log(req)
+//     const pathName = req.url;
+//     if(pathName === '/' || pathName === "/overview"){
+//         res.end("This is the overview");
+//     }
+//     else if(pathName === "/product"){
+//         res.end("This is the product");
+//     }
+//     else{      
+//         // res.writeHead(404,"Page Not found");
+
+//         // adding response-header  
+//         // 1. stantandr header   etc :  text/html , text/text ..... pdf ....,, file , img
+//         // 2. custom header    we can add custom header
+//         res.writeHead(404,{
+//             'content-type':"text/html",
+//             'my-own-header':'hello-world'
+//         })
+//         res.end("<h1>Page not found!</h1>")
+//     }
+// })
+
+// server.listen(8300,'127.0.0.1',()=>{
+//     console.log("Listening to request on port 8000");
+// })
+
+// //server keep runing until we do not stop
+// //becuase of event loop used on server and listen
+// // after runing the server  node index.js    
+// // user server on browser   127.0.0.1:8000
 
 
 //#endregion
