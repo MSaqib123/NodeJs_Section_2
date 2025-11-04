@@ -1,10 +1,11 @@
 //===================================
-// 15 - HTML Templating Filling the Templates
+// 16 - Parsing Variables from URLs
 //===================================
 //#region 
 const fs = require('fs');
 const http = require('http');
 const url = require('url');
+
 
 
 // read data from file
@@ -25,6 +26,7 @@ const replaceTemplate = (temp,product) =>{
     output = output.replace(/{%DESCRIPTION%}/g, product.description)
     output = output.replace(/{%QUANTITY%}/g, product.quantity)
     output = output.replace(/{%ID%}/g, product.id)
+    output = output.replace(/{%PRICE%}/g, product.price)
     if(!product.organic) output = output.replace(/{%NOT_ORGANIC%}/g, 'not-organic')
 
     return output;
@@ -33,34 +35,36 @@ const replaceTemplate = (temp,product) =>{
 
 // Server
 const server = http.createServer((req,res)=> {
-    // console.log(req)
-    const pathName = req.url;
+    // url 
+    // console.log(req.url)
+    // console.log(url.parse(req.url,true));
+    // const pathname = req.url;
+    const { query, pathname} = url.parse(req.url,true)
+     
+
 
     // Overview page
-    if(pathName === '/' || pathName === "/overview"){
+    if(pathname === '/' || pathname === "/overview"){
         res.writeHead(200,{'content-type':'text/html'})
-
         const cardsHtml = dataObj.map(el=>replaceTemplate(templateCard,el)).join('') 
-        //convert to string by join
-        //console.log(cardsHtml);
-        // res.end(templateOverview)
-
         const output = templateOverview.replace(/{%PRODUCT_CARDS%}/g, cardsHtml)
         res.end(output)
     }
     // Product page
-    else if(pathName === "/product"){
-        res.end("This is the product");
+    else if(pathname === "/product"){
+        // console.log(query)
+
+        res.writeHead(200,{'content-type':'text/html'})
+
+        // filter product card base on id form object list of js
+        const product = dataObj[query.id];
+        const output = replaceTemplate(templateProduct,product)
+        res.end(output);
     }
     // api page
-    else if(pathName === "/api"){
+    else if(pathname === "/api"){
         res.writeHead(200, {'Content-type':'application/json'});
         res.end(data)
-
-        // fs.readFile('./dev-data/data.json','utf-8',(err,data)=>{
-        //     res.writeHead(200, {'Content-type':'application/json'});
-        //     res.end(data)
-        // });
     }
     // NOT Found
     else{
@@ -71,10 +75,91 @@ const server = http.createServer((req,res)=> {
         res.end("<h1>Page not found!</h1>")
     }
 })
-
 server.listen(8300,'127.0.0.1',()=>{
     console.log("Listening to request on port 8000");
 })
+
+
+//#endregion
+
+
+//===================================
+// 15 - HTML Templating Filling the Templates
+//===================================
+//#region 
+// const fs = require('fs');
+// const http = require('http');
+// const url = require('url');
+
+
+// // read data from file
+// const data = fs.readFileSync('./dev-data/data.json','utf-8');
+// const dataObj = JSON.parse(data);
+
+// // read html template
+// const templateOverview = fs.readFileSync('./templates/template-overview.html','utf-8');
+// const templateCard = fs.readFileSync('./templates/template-card.html','utf-8');
+// const templateProduct = fs.readFileSync('./templates/template-product.html','utf-8');
+
+// // Helper Methods
+// const replaceTemplate = (temp,product) =>{
+//     let output = temp.replace(/{%PRODUCTNAME%}/g, product.productName)
+//     output = output.replace(/{%IMAGE%}/g, product.image)
+//     output = output.replace(/{%FROM%}/g, product.from)
+//     output = output.replace(/{%NUTRIENTS%}/g, product.nutrients)
+//     output = output.replace(/{%DESCRIPTION%}/g, product.description)
+//     output = output.replace(/{%QUANTITY%}/g, product.quantity)
+//     output = output.replace(/{%ID%}/g, product.id)
+//     if(!product.organic) output = output.replace(/{%NOT_ORGANIC%}/g, 'not-organic')
+
+//     return output;
+// }
+
+
+// // Server
+// const server = http.createServer((req,res)=> {
+//     // console.log(req)
+//     const pathname = req.url;
+
+//     // Overview page
+//     if(pathname === '/' || pathname === "/overview"){
+//         res.writeHead(200,{'content-type':'text/html'})
+
+//         const cardsHtml = dataObj.map(el=>replaceTemplate(templateCard,el)).join('') 
+//         //convert to string by join
+//         //console.log(cardsHtml);
+//         // res.end(templateOverview)
+
+//         const output = templateOverview.replace(/{%PRODUCT_CARDS%}/g, cardsHtml)
+//         res.end(output)
+//     }
+//     // Product page
+//     else if(pathname === "/product"){
+//         res.end("This is the product");
+//     }
+//     // api page
+//     else if(pathname === "/api"){
+//         res.writeHead(200, {'Content-type':'application/json'});
+//         res.end(data)
+
+//         // fs.readFile('./dev-data/data.json','utf-8',(err,data)=>{
+//         //     res.writeHead(200, {'Content-type':'application/json'});
+//         //     res.end(data)
+//         // });
+//     }
+//     // NOT Found
+//     else{
+//         res.writeHead(404,{
+//             'content-type':"text/html",
+//             'my-own-header':'hello-world'
+//         })
+//         res.end("<h1>Page not found!</h1>")
+//     }
+// })
+
+// server.listen(8300,'127.0.0.1',()=>{
+//     console.log("Listening to request on port 8000");
+// })
 
 
 //#endregion
@@ -100,14 +185,14 @@ server.listen(8300,'127.0.0.1',()=>{
 // // Server
 // const server = http.createServer((req,res)=> {
 //     // console.log(req)
-//     const pathName = req.url;
-//     if(pathName === '/' || pathName === "/overview"){
+//     const pathname = req.url;
+//     if(pathname === '/' || pathname === "/overview"){
 //         res.end("This is the overview");
 //     }
-//     else if(pathName === "/product"){
+//     else if(pathname === "/product"){
 //         res.end("This is the product");
 //     }
-//     else if(pathName === "/api"){
+//     else if(pathname === "/api"){
         
 //         res.writeHead(200, {'Content-type':'application/json'});
 //         res.end(data)
@@ -150,11 +235,11 @@ server.listen(8300,'127.0.0.1',()=>{
 // // Server
 // const server = http.createServer((req,res)=> {
 //     // console.log(req)
-//     const pathName = req.url;
-//     if(pathName === '/' || pathName === "/overview"){
+//     const pathname = req.url;
+//     if(pathname === '/' || pathname === "/overview"){
 //         res.end("This is the overview");
 //     }
-//     else if(pathName === "/product"){
+//     else if(pathname === "/product"){
 //         res.end("This is the product");
 //     }
 //     else{      
