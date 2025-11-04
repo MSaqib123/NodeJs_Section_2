@@ -1,14 +1,12 @@
 //===================================
-// 17 - Using Modules 2 Our Own Modules
+// 20 - Using Modules 3 3rd Party Modules
 //===================================
 //#region 
 const fs = require('fs');
 const http = require('http');
 const url = require('url');
-
+const slugify = require('slugify');
 const replaceTemplate = require('./modules/replaceTemplate');
-
-
 
 // read data from file
 const data = fs.readFileSync('./dev-data/data.json','utf-8');
@@ -19,30 +17,31 @@ const templateOverview = fs.readFileSync('./templates/template-overview.html','u
 const templateCard = fs.readFileSync('./templates/template-card.html','utf-8');
 const templateProduct = fs.readFileSync('./templates/template-product.html','utf-8');
 
-// Helper Methods
-// const replaceTemplate = (temp,product) =>{
-//     let output = temp.replace(/{%PRODUCTNAME%}/g, product.productName)
-//     output = output.replace(/{%IMAGE%}/g, product.image)
-//     output = output.replace(/{%FROM%}/g, product.from)
-//     output = output.replace(/{%NUTRIENTS%}/g, product.nutrients)
-//     output = output.replace(/{%DESCRIPTION%}/g, product.description)
-//     output = output.replace(/{%QUANTITY%}/g, product.quantity)
-//     output = output.replace(/{%ID%}/g, product.id)
-//     output = output.replace(/{%PRICE%}/g, product.price)
-//     if(!product.organic) output = output.replace(/{%NOT_ORGANIC%}/g, 'not-organic')
-//     return output;
-// }
+// Slugify working
+/*
+slugify('some string', {
+  replacement: '-',  // replace spaces with replacement character, defaults to `-`
+  remove: undefined, // remove characters that match regex, defaults to `undefined`
+  lower: false,      // convert to lower case, defaults to `false`
+  strict: false,     // strip special characters except replacement, defaults to `false`
+  locale: 'vi',      // language code of the locale to use
+  trim: true         // trim leading and trailing replacement chars, defaults to `true`
+})
+*/
+console.log(slugify('Fresh avocados',{
+    replacement: '-',
+    lower: true
+}))
+
+const slugs = dataObj.map(el=> slugify(el.productName , {lower:true}))
+console.log(slugs)
+
+
 
 
 // Server
 const server = http.createServer((req,res)=> {
-    // url 
-    // console.log(req.url)
-    // console.log(url.parse(req.url,true));
-    // const pathname = req.url;
     const { query, pathname} = url.parse(req.url,true)
-     
-
 
     // Overview page
     if(pathname === '/' || pathname === "/overview"){
@@ -79,6 +78,93 @@ const server = http.createServer((req,res)=> {
 server.listen(8300,'127.0.0.1',()=>{
     console.log("Listening to request on port 8000");
 })
+
+
+//#endregion
+
+
+
+//===================================
+// 17 - Using Modules 2 Our Own Modules
+//===================================
+//#region 
+// const fs = require('fs');
+// const http = require('http');
+// const url = require('url');
+
+// const replaceTemplate = require('./modules/replaceTemplate');
+
+
+
+// // read data from file
+// const data = fs.readFileSync('./dev-data/data.json','utf-8');
+// const dataObj = JSON.parse(data);
+
+// // read html template
+// const templateOverview = fs.readFileSync('./templates/template-overview.html','utf-8');
+// const templateCard = fs.readFileSync('./templates/template-card.html','utf-8');
+// const templateProduct = fs.readFileSync('./templates/template-product.html','utf-8');
+
+// // Helper Methods
+// // const replaceTemplate = (temp,product) =>{
+// //     let output = temp.replace(/{%PRODUCTNAME%}/g, product.productName)
+// //     output = output.replace(/{%IMAGE%}/g, product.image)
+// //     output = output.replace(/{%FROM%}/g, product.from)
+// //     output = output.replace(/{%NUTRIENTS%}/g, product.nutrients)
+// //     output = output.replace(/{%DESCRIPTION%}/g, product.description)
+// //     output = output.replace(/{%QUANTITY%}/g, product.quantity)
+// //     output = output.replace(/{%ID%}/g, product.id)
+// //     output = output.replace(/{%PRICE%}/g, product.price)
+// //     if(!product.organic) output = output.replace(/{%NOT_ORGANIC%}/g, 'not-organic')
+// //     return output;
+// // }
+
+
+// // Server
+// const server = http.createServer((req,res)=> {
+//     // url 
+//     // console.log(req.url)
+//     // console.log(url.parse(req.url,true));
+//     // const pathname = req.url;
+//     const { query, pathname} = url.parse(req.url,true)
+     
+
+
+//     // Overview page
+//     if(pathname === '/' || pathname === "/overview"){
+//         res.writeHead(200,{'content-type':'text/html'})
+//         const cardsHtml = dataObj.map(el=>replaceTemplate(templateCard,el)).join('') 
+//         const output = templateOverview.replace(/{%PRODUCT_CARDS%}/g, cardsHtml)
+//         res.end(output)
+//     }
+//     // Product page
+//     else if(pathname === "/product"){
+//         // console.log(query)
+
+//         res.writeHead(200,{'content-type':'text/html'})
+
+//         // filter product card base on id form object list of js
+//         const product = dataObj[query.id];
+//         const output = replaceTemplate(templateProduct,product)
+//         res.end(output);
+//     }
+//     // api page
+//     else if(pathname === "/api"){
+//         res.writeHead(200, {'Content-type':'application/json'});
+//         res.end(data)
+//     }
+//     // NOT Found
+//     else{
+//         res.writeHead(404,{
+//             'content-type':"text/html",
+//             'my-own-header':'hello-world'
+//         })
+//         res.end("<h1>Page not found!</h1>")
+//     }
+// })
+// server.listen(8300,'127.0.0.1',()=>{
+//     console.log("Listening to request on port 8000");
+// })
 
 
 //#endregion
