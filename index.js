@@ -1,85 +1,119 @@
 //===================================
-// 20 - Using Modules 3 3rd Party Modules
+// 22 - Setting up Extension in VS Code
 //===================================
 //#region 
-const fs = require('fs');
-const http = require('http');
-const url = require('url');
-const slugify = require('slugify');
-const replaceTemplate = require('./modules/replaceTemplate');
 
-// read data from file
-const data = fs.readFileSync('./dev-data/data.json','utf-8');
-const dataObj = JSON.parse(data);
+//#endregion
 
-// read html template
-const templateOverview = fs.readFileSync('./templates/template-overview.html','utf-8');
-const templateCard = fs.readFileSync('./templates/template-card.html','utf-8');
-const templateProduct = fs.readFileSync('./templates/template-product.html','utf-8');
+//===================================
+// 21 - Package Versioning and updatino
+//===================================
+//#region 
+//=== 1. Package Version Parts =====
+// [majorVersion].[minerversion].[patchVersion] = 1.10.11
+// majorVerson =>  completey new version upgration some changing in older version or some feature removed ...
+// minerversion => new feature in exisiting feature but not change in old version
+// patchVersion => bug fixes  10 > 11 > 12 >....
 
-// Slugify working
-/*
-slugify('some string', {
-  replacement: '-',  // replace spaces with replacement character, defaults to `-`
-  remove: undefined, // remove characters that match regex, defaults to `undefined`
-  lower: false,      // convert to lower case, defaults to `false`
-  strict: false,     // strip special characters except replacement, defaults to `false`
-  locale: 'vi',      // language code of the locale to use
-  trim: true         // trim leading and trailing replacement chars, defaults to `true`
-})
-*/
-console.log(slugify('Fresh avocados',{
-    replacement: '-',
-    lower: true
-}))
+//=== 2.  ^ caret symbol ===            "slugify": "^1.6.6"
+// accept only  patch,Minur version   
+// means when we install the all packages -->  if new update comes it will not change majorversion only patch+minur version
+// npm outdated                 => outdated Package List 
+// npm install slugify@1.0.0    => install specifice verison package
+// npm update                   => will update all version          ^ , update only  miner+patch verios  ❌ do not jump to next version
+// npm update slugify           => it will update only slugify      ^ , update only  miner+patch verios  ❌ do not jump to next version
 
-const slugs = dataObj.map(el=> slugify(el.productName , {lower:true}))
-console.log(slugs)
+//=== 3. ~ Tilde symbol ===             "slugify": "~1.6.6"
+// npm update                   => will update all version          ^ , update and Jumb to Next version if exist   ✅ 2.0.0
+// npm update slugify           => it will update only slugify      ^ ,  update and Jumb to Next version if exist   ✅ 2.0.0
 
 
 
+//#endregion
 
-// Server
-const server = http.createServer((req,res)=> {
-    const { query, pathname} = url.parse(req.url,true)
+//===================================
+// 20 - Using Modules 3 3rd Party Modules  _ Install the sluggify
+//===================================
+//#region 
+// const fs = require('fs');
+// const http = require('http');
+// const url = require('url');
+// const slugify = require('slugify');
+// const replaceTemplate = require('./modules/replaceTemplate');
 
-    // Overview page
-    if(pathname === '/' || pathname === "/overview"){
-        res.writeHead(200,{'content-type':'text/html'})
-        const cardsHtml = dataObj.map(el=>replaceTemplate(templateCard,el)).join('') 
-        const output = templateOverview.replace(/{%PRODUCT_CARDS%}/g, cardsHtml)
-        res.end(output)
-    }
-    // Product page
-    else if(pathname === "/product"){
-        // console.log(query)
+// // read data from file
+// const data = fs.readFileSync('./dev-data/data.json','utf-8');
+// const dataObj = JSON.parse(data);
 
-        res.writeHead(200,{'content-type':'text/html'})
+// // read html template
+// const templateOverview = fs.readFileSync('./templates/template-overview.html','utf-8');
+// const templateCard = fs.readFileSync('./templates/template-card.html','utf-8');
+// const templateProduct = fs.readFileSync('./templates/template-product.html','utf-8');
 
-        // filter product card base on id form object list of js
-        const product = dataObj[query.id];
-        const output = replaceTemplate(templateProduct,product)
-        res.end(output);
-    }
-    // api page
-    else if(pathname === "/api"){
-        res.writeHead(200, {'Content-type':'application/json'});
-        res.end(data)
-    }
-    // NOT Found
-    else{
-        res.writeHead(404,{
-            'content-type':"text/html",
-            'my-own-header':'hello-world'
-        })
-        res.end("<h1>Page not found!</h1>")
-    }
-})
-server.listen(8300,'127.0.0.1',()=>{
-    console.log("Listening to request on port 8000");
-})
+// // Slugify working
+// // npm i slugify (install npm package 1st)
+// // Slug is the last part of the URL  that contain the Query  (((id=23&name=saqib)))
+
+// /*
+// slugify('some string', {
+//   replacement: '-',  // replace spaces with replacement character, defaults to `-`
+//   remove: undefined, // remove characters that match regex, defaults to `undefined`
+//   lower: false,      // convert to lower case, defaults to `false`
+//   strict: false,     // strip special characters except replacement, defaults to `false`
+//   locale: 'vi',      // language code of the locale to use
+//   trim: true         // trim leading and trailing replacement chars, defaults to `true`
+// })
+// */
+// console.log(slugify('Fresh avocados',{
+//     replacement: '-',
+//     lower: true
+// }))
+
+// const slugs = dataObj.map(el=> slugify(el.productName , {lower:true}))
+// console.log(slugs)
 
 
+
+
+// // Server
+// const server = http.createServer((req,res)=> {
+//     const { query, pathname} = url.parse(req.url,true)
+
+//     // Overview page
+//     if(pathname === '/' || pathname === "/overview"){
+//         res.writeHead(200,{'content-type':'text/html'})
+//         const cardsHtml = dataObj.map(el=>replaceTemplate(templateCard,el)).join('') 
+//         const output = templateOverview.replace(/{%PRODUCT_CARDS%}/g, cardsHtml)
+//         res.end(output)
+//     }
+//     // Product page
+//     else if(pathname === "/product"){
+//         // console.log(query)
+
+//         res.writeHead(200,{'content-type':'text/html'})
+
+//         // filter product card base on id form object list of js
+//         const product = dataObj[query.id];
+//         const output = replaceTemplate(templateProduct,product)
+//         res.end(output);
+//     }
+//     // api page
+//     else if(pathname === "/api"){
+//         res.writeHead(200, {'Content-type':'application/json'});
+//         res.end(data)
+//     }
+//     // NOT Found
+//     else{
+//         res.writeHead(404,{
+//             'content-type':"text/html",
+//             'my-own-header':'hello-world'
+//         })
+//         res.end("<h1>Page not found!</h1>")
+//     }
+// })
+// server.listen(8300,'127.0.0.1',()=>{
+//     console.log("Listening to request on port 8000");
+// })
 //#endregion
 
 
@@ -276,6 +310,10 @@ server.listen(8300,'127.0.0.1',()=>{
 
 // // Helper Methods
 // const replaceTemplate = (temp,product) =>{
+//     //Replace only the 1st matching value
+//     //let output = temp.replace('{%PRODUCTNAME%}', product.productName)
+
+//     //Replace all the similar name
 //     let output = temp.replace(/{%PRODUCTNAME%}/g, product.productName)
 //     output = output.replace(/{%IMAGE%}/g, product.image)
 //     output = output.replace(/{%FROM%}/g, product.from)
@@ -397,7 +435,7 @@ server.listen(8300,'127.0.0.1',()=>{
 
 
 //===================================
-// 12 - Routing
+// 12 - Routing and ResponseHeader
 //===================================
 //#region 
 // const fs = require('fs');
@@ -419,8 +457,8 @@ server.listen(8300,'127.0.0.1',()=>{
 //         // res.writeHead(404,"Page Not found");
 
 //         // adding response-header  
-//         // 1. stantandr header   etc :  text/html , text/text ..... pdf ....,, file , img
-//         // 2. custom header    we can add custom header
+//         // 1. stantandr header       -> etc :  text/html , text/text ..... pdf ....,, file , img
+//         // 2. custom header          -> we can add custom header
 //         res.writeHead(404,{
 //             'content-type':"text/html",
 //             'my-own-header':'hello-world'
@@ -468,7 +506,7 @@ server.listen(8300,'127.0.0.1',()=>{
 // // after runing the server  node index.js    
 // // user server on browser   127.0.0.1:8000
 
-
+    
 //#endregion
 
 
@@ -540,8 +578,8 @@ server.listen(8300,'127.0.0.1',()=>{
 //#region 7 - Using Modules 1 Core Modules
 // //======== Node Modules ========
 
-// // file system   = read
-// // https://nodejs.org/docs/latest-v20.x/api/fs.html   document
+// file system   = read
+// https://nodejs.org/docs/latest-v20.x/api/fs.html   document
 // const fs = require(fs);
 
 
